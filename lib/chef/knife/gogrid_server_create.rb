@@ -82,6 +82,13 @@ class Chef
         :description => "Comma separated list of roles/recipes to apply",
         :proc => lambda { |o| o.split(/[\s,]+/) }
 
+      option :json_attributes,
+        :short => "-j JSON",
+        :long => "--json-attributes JSON",
+        :description => "A JSON string to be added to the first run of chef-client",
+        :proc => lambda { |o| JSON.parse(o) }
+
+
       def h
         @highline ||= HighLine.new
       end
@@ -203,6 +210,7 @@ class Chef
         bootstrap.config[:chef_node_name] = config[:name] || server.id
         bootstrap.config[:use_sudo] = false
         bootstrap.config[:distro] = config[:distro]
+        bootstrap.config[:first_boot_attributes] = locate_config_value(:json_attributes) || {}
         bootstrap.config[:template_file] = config[:template_file]        
 	bootstrap
       end
